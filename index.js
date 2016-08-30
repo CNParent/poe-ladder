@@ -1,20 +1,18 @@
 ﻿const {ipcRenderer} = require('electron')
 
+let leagues = [];
 let seasons = [];
 let events = [];
 
-let characterUrl = "http://www.pathofexile.com/character-window/get-characters?accountName=";
 let ladderUrl = "http://api.pathofexile.com/ladders";
+let leaguesUrl = "http://api.pathofexile.com/leagues?type=main";
 let seasonsUrl = "http://www.pathofexile.com/api/seasons";
 let eventsUrl = "http://api.pathofexile.com/leagues?type=season";
 
-let accountName = "";
 let characterName = "";
 let seasonName = "";
 let eventName = "";
 
-let league;
-let level;
 let previousRank;
 let rank;
 let classRank;
@@ -29,7 +27,6 @@ let elements;
 
 function init(){
     elements = {
-        account: document.getElementById('account'),
         name: document.getElementById('name'),
         rank: document.getElementById('rank'),
         rankChange: document.getElementById('rankChange'),
@@ -50,11 +47,11 @@ function init(){
             minLevel: { text: elements.minLevel.innerText, display: elements.minLevel.style.display },
             minEp: { text: elements.minEp.innerText, display: elements.minEp.style.display },
             updatedOn: { text: elements.updatedOn.innerText, display: elements.updatedOn.style.display },
-            frame: elements.account.style.display == "none",
-            accountName: accountName,
+            frame: elements.name.style.display == "none",
             characterName: characterName,
             seasonName: seasonName,
             eventName: eventName,
+            leagues: leagues,
             seasons: seasons,
             events: events
         });
@@ -67,6 +64,11 @@ function init(){
         eventName = "";
         seasonName = e.currentTarget.value;
         if(seasonName == "") return;
+        if(leagues.includes(seasonName)){
+            eventName = seasonName;
+            elements.event.value = eventName;
+            return;
+        }
         fetchEvents(0);
     });
     elements.event.addEventListener('change', (e) => {
@@ -76,10 +78,31 @@ function init(){
     elements.name.addEventListener('change', (e) => {
         characterName = e.currentTarget.value;
     });
-    elements.account.addEventListener('change', (e) => {
-        accountName = e.currentTarget.value;
-    });
-    window.setTimeout(fetchSeasons, 1000);
+    window.setTimeout(fetchLeagues, 1000);
+}
+
+function fetchLeagues(){
+    if(leagues.length != 0) return;
+    elements.updatedOn.innerText = "Fetching leagues...";
+    let req = new XMLHttpRequest();
+    req.open("GET",leaguesUrl);
+    req.onloadend = () => {
+        if(req.status != 200){
+            window.setTimeout(fetchLeagues, 30000);
+            return;
+        }
+        let d = JSON.parse(req.responseText);
+        if(!d || d.length == 0){
+            elements.updatedOn.innerText = "Leagues unavailable";
+            return;
+        }
+        for(let i = 0; i < d.length; i++){
+            if(!d[i].id) continue;
+            leagues.push(d[i].id);
+        }
+        fetchSeasons();
+    }
+    req.send();
 }
 
 function fetchSeasons(){
@@ -89,7 +112,7 @@ function fetchSeasons(){
     req.open("GET",seasonsUrl);
     req.onloadend = () => {
         if(req.status != 200){
-            window.setTimeout(fetchSeasons, 10000);
+            window.setTimeout(fetchSeasons, 30000);
             return;
         }
         let d = JSON.parse(req.responseText);
@@ -106,15 +129,6 @@ function fetchSeasons(){
         elements.season.disabled = false;
     }
     req.send();
-}
-
-function displaySeasons(){
-    seasons = seasons.sort((a,b) => a.localeCompare(b));
-    for(let i = 0; i < seasons.length; i++){
-        let opt = document.createElement("option");
-        opt.text = seasons[i];
-        elements.season.add(opt);
-    }
 }
 
 function fetchEvents(offset){
@@ -142,6 +156,20 @@ function fetchEvents(offset){
     req.send();
 }
 
+function displaySeasons(){
+    for(let i = 0; i < leagues.length; i++){
+        let opt = document.createElement("option");
+        opt.text = leagues[i];
+        elements.season.add(opt);
+    }
+    seasons = seasons.sort((a,b) => a.localeCompare(b));
+    for(let i = 0; i < seasons.length; i++){
+        let opt = document.createElement("option");
+        opt.text = seasons[i];
+        elements.season.add(opt);
+    }
+}
+
 function displayEvents(){
     events = events.sort((a,b) => a.localeCompare(b));
     for(let i = 0; i < events.length; i++){
@@ -151,100 +179,30 @@ function displayEvents(){
     }
 }
 
-function getCharacter() {
-    if(!characterName){
-        elements.updatedOn.innerText = "Character name required";
-        return;
-    }
-    else if(!accountName && !eventName){
-        elements.updatedOn.innerText = "Account name or event required";
-        return;
-    }
-    else if(!accountName){
-        level = 0;
-        league = "";
-        buildList();
-        return;
-    }
-    let req = new XMLHttpRequest();
-    req.open("GET", characterUrl + accountName);
-    req.onloadend = () => {
-        if(req.status != 200){
-            win.setTimeout(getCharacter, 10000);
-            return;
-        }
-        let d = JSON.parse(req.responseText);
-        if(!d){
-            elements.updatedOn.innerText = "Account is private";
-            return;
-        }
-        let c = d.find((x) => x.name == characterName);
-        if(!c){
-            elements.updatedOn.innerText = "Invalid character";
-            return;
-        }
-        else{
-            league = c.league;
-            level = c.level;
-            buildList();
-        }
-    }
-    req.send();
-}
-
 function buildList() {
+    if(!eventName){
+        elements.updatedOn.innerText = "Must choose an event or league";
+        return;
+    }
     if(rank){
         previousRank = rank.rank;
         rank = null;
     }
     let url = ladderUrl;
-    if(eventName) url += "?id=" + eventName;
-    else url += "?id=" + league;
+    url += "?id=" + eventName;
     url += "&limit=1";
     
     let req = new XMLHttpRequest();
     req.open("GET",url);
     req.onloadend = () => {
         if(req.status != 200){
-            window.setTimeout(buildList, 10000);
+            window.setTimeout(buildList, 30000);
             return;
         }
         let d = JSON.parse(req.responseText);
         total = d.total;
         ladder = new Array(total);
-        checkLowerBound();
-    }
-    req.send();
-}
-
-function checkLowerBound() {
-    if(level == 0) {
         fetch(0);
-        return;
-    }
-    let url = ladderUrl;
-    if(eventName) url += "?id=" + eventName;
-    else url += "?id=" + league;
-    url += "&offset=" + (total - 1);
-    url += "&limit=1";
-    
-    let req = new XMLHttpRequest();
-    req.open("GET", url);
-    req.onloadend = () => {
-        if(req.status != 200){
-            window.setTimeout(checkLowerBound, 10000);
-            return;
-        }
-        let d = JSON.parse(req.responseText);
-        if(d.entries[0].character.level > level){
-            minLevel = d.entries[0].character.level;
-            minEp = d.entries[0].character.experience;
-            notFound();
-            window.setTimeout(getCharacter, 10000);
-        }
-        else{
-            fetch(0);
-        }
     }
     req.send();
 }
@@ -258,8 +216,7 @@ function fetch(offset){
         limit = total - offset;
     }
     let url = ladderUrl;
-    if(eventName) url += "?id=" + eventName;
-    else url += "?id=" + league;
+    url += "?id=" + eventName;
     url += "&offset=" + offset;
     url += "&limit=" + limit;
     
@@ -267,7 +224,7 @@ function fetch(offset){
     req.open("GET",url);
     req.onloadend = () => {
         if(req.status != 200){
-            win.setTimeout(() => { fetch(offset) }, 10000);
+            window.setTimeout(() => { fetch(offset) }, 30000);
             return;
         }
         let d = JSON.parse(req.responseText);
@@ -280,13 +237,13 @@ function fetch(offset){
         }
         if(rank){
             found();
-            window.setTimeout(getCharacter, 10000);
+            window.setTimeout(buildList, 10000);
         }
-        else if(offset > total){
+        else if(offset >= total){
             minLevel = d.entries[limit-1].character.level;
             minEp = d.entries[limit-1].character.experience;
             notFound();
-            window.setTimeout(getCharacter, 10000);
+            window.setTimeout(buildList, 10000);
         }
         else{
             window.setTimeout(() => { fetch(offset); }, 500);
@@ -363,7 +320,6 @@ function hideInputs(){
     for(let i = 0; i < labels.length; i++){
         document.getElementsByClassName('label').item(i).style.display = "none";
     }
-    elements.account.style.display = "none";
     elements.name.style.display = "none";
     elements.event.style.display = "none";
     elements.season.style.display = "none";
@@ -390,9 +346,9 @@ ipcRenderer.on('elements', (e,d) => {
     elements.updatedOn.style.display = d.updatedOn.display;
 
     characterName = d.characterName;
-    accountName = d.accountName;
     seasonName = d.seasonName;
     eventName = d.eventName;
+    leagues = d.leagues;
     seasons = d.seasons;
     events = d.events;
 
@@ -400,15 +356,15 @@ ipcRenderer.on('elements', (e,d) => {
         elements.updatedOn.style.display = "flex";
         if(elements.rank.innerText == "") elements.rank.innerText = "Fetching rank...";
         hideInputs();
-        getCharacter();
+        buildList();
         return;
     }
     
-    document.getElementById('account').value = accountName;
     document.getElementById('name').value = characterName;
     displaySeasons();
     displayEvents();
     elements.season.value = seasonName;
     elements.event.value = eventName;
-    elements.event.disabled = elements.season.value == "" ? true : false;
+    elements.season.disabled = false;
+    elements.event.disabled = leagues.includes(seasonName);
 });

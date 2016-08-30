@@ -8,7 +8,7 @@ let elements;
 
 function createWindow() {
     Menu.setApplicationMenu(null);
-    win = new BrowserWindow({ width:216, height:299, resizable: false });
+    win = new BrowserWindow({ width:216, height:279, resizable: false });
     win.loadURL(`file://${__dirname}/index.html`);
     win.menu = null;
     win.toggleDevTools();
@@ -29,7 +29,7 @@ ipcMain.on('toggle-frame', (e,d) => {
         frameless = true;
     }
     else{
-        newWin = new BrowserWindow({ width:216, height:299, x: x, y: y, resizable: false });
+        newWin = new BrowserWindow({ width:216, height:279, x: x, y: y, resizable: false });
         newWin.loadURL(`file://${__dirname}/index.html`);
         newWin.menu = null;
         frameless = false;
