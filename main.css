@@ -2,7 +2,6 @@ html{
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    height: 100%;
     -webkit-user-select: none;
     cursor: default;
 }
@@ -17,6 +16,7 @@ body{
 
 div{
     float: left;
+    white-space: nowrap;
 }
 
 input{
@@ -26,6 +26,18 @@ input{
     height: 14px;
     padding-left: 2px;
     width: 93px;
+    font-size: 10px;
+    font-family: consolas;
+}
+
+select{
+    margin-top: 2px;
+    margin-bottom: 2px;
+    height: 16px;
+    padding-left: 2px;
+    width: 99px;
+    font-size: 10px;
+    font-family: consolas;
 }
 
 #rank{

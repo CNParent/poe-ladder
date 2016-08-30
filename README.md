@@ -8,9 +8,3 @@ Simply position the window, enter an account and character name, and click "Star
 Updates can be as frequent as every 5s for characters placing high on the ladder, but may take over a minute for those near the bottom or who meet the minimum level requirement, but not the minimum experience requirement for placement. The lack of query options on the official ladder API limit the efficiency of retrieving the information necessary to determine your class rank and are the cause of the slowdown.
 
 To use the application, simply download the appropriate release and extract the archive.
-
-##Build
-The build process leverages 
-* [electron-packager](https://github.com/electron-userland/electron-packager)
-* [electron-prebuilt](https://github.com/electron-userland/electron-prebuilt)
-* [rcedit](https://github.com/electron/rcedit)
