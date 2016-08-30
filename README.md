@@ -11,6 +11,6 @@ To use the application, simply download the appropriate release and extract the 
 
 ##Build
 The build process leverages 
-*[electron-packager](https://github.com/electron-userland/electron-packager)
-*[electron-prebuilt](https://github.com/electron-userland/electron-prebuilt)
-*[rcedit](https://github.com/electron/rcedit)
+* [electron-packager](https://github.com/electron-userland/electron-packager)
+* [electron-prebuilt](https://github.com/electron-userland/electron-prebuilt)
+* [rcedit](https://github.com/electron/rcedit)
