@@ -1,6 +1,6 @@
 # Path of Exile Ladder Overlay
 ##Overview
-The Path of Exile Ladder Overlay is a tool that can be configured to display
+The Path of Exile Ladder Overlay is a tool that can be configured to display a specified character's rank and class rank in a specified league or event.
 
 The PoE Ladder Overlay was built using [Electron](https://github.com/electron/electron). 
 
