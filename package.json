@@ -1,0 +1,14 @@
+{
+  "name": "POELadder",
+  "version": "1.0.0",
+  "description": "Path of Exile Ladder",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Chris Parent",
+  "license": "MIT",
+  "devDependencies": {
+    "electron-prebuilt": "^1.2.0"
+  }
+}
