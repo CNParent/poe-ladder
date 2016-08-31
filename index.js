@@ -290,7 +290,7 @@ function notFound(){
     elements.rankClassChange.innerText = "+0";
     elements.rankClassChange.style.color = colors.same;
     elements.minLevel.innerText = "Minimum Level: " + minLevel;
-    elements.minEp.innerText = "Minimum EP: " + minEp;
+    elements.minEp.innerText = "Minimum Exp: " + numberWithCommas(minEp);
     elements.updatedOn.innerText = (new Date()).getTime();
 
     elements.rank.style.display = "flex";
@@ -313,6 +313,10 @@ function pad(n,d){
         l = '0' + l;
     }
     return l;
+}
+// http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function hideInputs(){
