@@ -259,8 +259,8 @@ function found(){
     else delta = rank.rank - previousRank;
     elements.rankChange.innerText = delta >= 0 ? "+" + delta : delta;
     if(delta == 0) elements.rankChange.style.color = colors.same;
-    else if(delta > 0) elements.rankChange.style.color = colors.up;
-    else if(delta < 0) elements.rankChange.style.color = colors.down;
+    else if(delta > 0) elements.rankChange.style.color = colors.down;
+    else if(delta < 0) elements.rankChange.style.color = colors.up;
     
     let sameClass = ladder.filter((x) => x.character.class == rank.character.class && x.rank < rank.rank);
     let newClassRank = sameClass.length + 1;
@@ -268,8 +268,8 @@ function found(){
     else delta = newClassRank - classRank;
     elements.rankClassChange.innerText = delta >= 0 ? "+" + delta : delta;
     if(delta == 0) elements.rankClassChange.style.color = colors.same;
-    else if(delta > 0) elements.rankClassChange.style.color = colors.up;
-    else if(delta < 0) elements.rankClassChange.style.color = colors.down;
+    else if(delta > 0) elements.rankClassChange.style.color = colors.down;
+    else if(delta < 0) elements.rankClassChange.style.color = colors.up;
     classRank = newClassRank;
     elements.rankClass.innerText = rank.character.class + " Rank: " + classRank;
     
