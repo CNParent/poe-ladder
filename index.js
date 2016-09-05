@@ -1,4 +1,5 @@
 ﻿const {ipcRenderer} = require('electron')
+var fs = require('fs')
 
 let leagues = [];
 let seasons = [];
@@ -39,6 +40,7 @@ function init(){
         event: document.getElementById('event')
     };
     document.getElementById('frame').addEventListener('click', () => {
+        saveDefaults();
         ipcRenderer.send("toggle-frame", {
             rank: { text: elements.rank.innerText, display: elements.rank.style.display },
             rankChange: { text: elements.rankChange.innerText, display: elements.rankChange.style.display },
@@ -127,6 +129,7 @@ function fetchSeasons(){
         elements.updatedOn.innerText = "";
         displaySeasons();
         elements.season.disabled = false;
+        loadDefaults();
     }
     req.send();
 }
@@ -177,6 +180,7 @@ function displayEvents(){
         opt.text = events[i];
         elements.event.add(opt);
     }
+    if(eventName) elements.event.value = eventName;
 }
 
 function buildList() {
@@ -372,3 +376,24 @@ ipcRenderer.on('elements', (e,d) => {
     elements.season.disabled = false;
     elements.event.disabled = leagues.includes(seasonName);
 });
+
+function saveDefaults(){
+    fs.writeFile("config.json", JSON.stringify({
+        season: seasonName,
+        event: eventName,
+        character: characterName
+    }));
+}
+
+function loadDefaults(){
+    fs.readFile("config.json", (e,f) => {
+        if(!f) return;
+        let config = JSON.parse(f.toString('utf8'));
+        seasonName = config.season;
+        eventName = config.event;
+        characterName = config.character;
+        elements.name.value = characterName;
+        elements.season.value = seasonName;
+        if(eventName != seasonName) fetchEvents(0);
+    });
+}

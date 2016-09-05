@@ -11,7 +11,6 @@ function createWindow() {
     win = new BrowserWindow({ width:216, height:279, resizable: false });
     win.loadURL(`file://${__dirname}/index.html`);
     win.menu = null;
-    win.toggleDevTools();
     win.on('closed', () => { 
         win = null;
     });
@@ -23,7 +22,7 @@ ipcMain.on('toggle-frame', (e,d) => {
     let x = win.getPosition()[0];
     let y = win.getPosition()[1];
     if(!frameless){
-        newWin = new BrowserWindow({ width:216, height:120, x: x, y: y, transparent: true, resizable: false, alwaysOnTop: true, frame: false });
+        newWin = new BrowserWindow({ width:216, height:120, x: x, y: y, transparent: true, resizable: false, alwaysOnTop: true, frame: false, skipTaskbar: true });
         newWin.loadURL(`file://${__dirname}/index.html`);
         newWin.menu = null;
         frameless = true;
@@ -37,7 +36,6 @@ ipcMain.on('toggle-frame', (e,d) => {
     newWin.show();
     win.close();
     win = newWin;
-    win.toggleDevTools();
     newWin.on('closed', () => {
         win = null;
     });
