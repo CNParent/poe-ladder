@@ -361,6 +361,8 @@ ipcRenderer.on('elements', (e,d) => {
     events = d.events;
 
     if(!d.frame){
+        elements.rank.style.display = "flex";
+        elements.rankChange.style.display = "flex";
         elements.updatedOn.style.display = "flex";
         if(elements.rank.innerText == "") elements.rank.innerText = "Fetching rank...";
         hideInputs();
