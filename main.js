@@ -22,7 +22,7 @@ ipcMain.on('toggle-frame', (e,d) => {
     let x = win.getPosition()[0];
     let y = win.getPosition()[1];
     if(!frameless){
-        newWin = new BrowserWindow({ width:216, height:120, x: x, y: y, transparent: true, resizable: false, alwaysOnTop: true, frame: false, skipTaskbar: true });
+        newWin = new BrowserWindow({ width:216, height:120, x: x, y: y, transparent: true, resizable: false, alwaysOnTop: true, frame: false, focusable: false, type: "toolbar" });
         newWin.loadURL(`file://${__dirname}/index.html`);
         newWin.menu = null;
         frameless = true;
