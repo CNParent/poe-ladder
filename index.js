@@ -154,7 +154,7 @@ function fetchEvents(offset){
         for(let i = 0; i < d.length; i++){
             events.push(d[i].id);
         }
-        window.setTimeout(() => { fetchEvents(offset + d.length); }, 500);
+        window.setTimeout(() => { fetchEvents(offset + d.length); }, 5000);
     }
     req.send();
 }
@@ -206,7 +206,7 @@ function buildList() {
         let d = JSON.parse(req.responseText);
         total = d.total;
         ladder = new Array(total);
-        fetch(0);
+        window.setTimeout(fetch, 5000);
     }
     req.send();
 }
@@ -250,7 +250,7 @@ function fetch(offset){
             window.setTimeout(buildList, 10000);
         }
         else{
-            window.setTimeout(() => { fetch(offset); }, 500);
+            window.setTimeout(() => { fetch(offset); }, 5000);
         }
     }
     req.send();
