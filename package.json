@@ -1,5 +1,5 @@
 {
-  "name": "POELadder",
+  "name": "poe-ladder",
   "version": "1.0.7",
   "description": "Path of Exile Ladder",
   "main": "main.js",
